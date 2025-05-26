@@ -119,6 +119,13 @@ async def get_book_by_title(book_title: str):
     for book in BOOKS:
         if book.get('title').casefold() == book_title.casefold():
             return book
+        
+@app.delete("/api/books/{book_title}")
+async def delete_book(book_title: str):
+    for i in range(len(BOOKS)):
+        if BOOKS[i].get("title").casefold() == book_title.casefold():
+            BOOKS.pop(i)
+            break
 
 
 @app.get("/api/books/{book_author}/")
