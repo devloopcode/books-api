@@ -15,8 +15,23 @@ BOOKS = [
     "category": "Dystopian"
   },
   {
+    "title": "Animal Farm",
+    "author": "George Orwell",
+    "category": "Political Satire"
+  },
+  {
     "title": "A Brief History of Time",
     "author": "Stephen Hawking",
+    "category": "Science"
+  },
+  {
+    "title": "The Theory of Everything",
+    "author": "Stephen Hawking",
+    "category": "Science"
+  },
+  {
+    "title": "Cosmos",
+    "author": "Carl Sagan",
     "category": "Science"
   },
   {
@@ -25,9 +40,29 @@ BOOKS = [
     "category": "Classic"
   },
   {
+    "title": "This Side of Paradise",
+    "author": "F. Scott Fitzgerald",
+    "category": "Classic"
+  },
+  {
     "title": "The Pragmatic Programmer",
     "author": "Andrew Hunt and David Thomas",
     "category": "Technology"
+  },
+  {
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "category": "Programming"
+  },
+  {
+    "title": "The Clean Coder",
+    "author": "Robert C. Martin",
+    "category": "Programming"
+  },
+  {
+    "title": "Code Complete",
+    "author": "Steve McConnell",
+    "category": "Programming"
   },
   {
     "title": "Sapiens: A Brief History of Humankind",
@@ -38,11 +73,6 @@ BOOKS = [
     "title": "The Catcher in the Rye",
     "author": "J.D. Salinger",
     "category": "Coming-of-Age"
-  },
-  {
-    "title": "Clean Code",
-    "author": "Robert C. Martin",
-    "category": "Programming"
   },
   {
     "title": "Thinking, Fast and Slow",
@@ -57,13 +87,32 @@ BOOKS = [
 ]
 
 
+
 @app.get("/api/books")
-async def fisrt_api_fn():
+async def get_books():
     return BOOKS
 
 
 @app.get("/api/books/{book_title}")
-async def get_book(book_title: str):
+async def get_book_by_title(book_title: str):
     for book in BOOKS:
         if book.get('title').casefold() == book_title.casefold():
             return book
+
+
+@app.get("/api/books/")
+async def get_book_by_category(category: str):
+    books_to_returns = []
+    for book in BOOKS:
+        if book.get('category').casefold() == category.casefold():
+            books_to_returns.append(book)
+    return books_to_returns
+
+
+@app.get("/api/books/{book_author}/")
+async def get_book_by_author_category(book_author:str, category: str):
+    books_to_returns = []
+    for book in BOOKS:
+        if book.get('category').casefold() == category.casefold()  and book.get('author').casefold() == book_author.casefold():
+            books_to_returns.append(book)
+    return books_to_returns
