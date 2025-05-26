@@ -2,7 +2,6 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-# 
 
 BOOKS = [
   {
@@ -61,3 +60,10 @@ BOOKS = [
 @app.get("/api/books")
 async def fisrt_api_fn():
     return BOOKS
+
+
+@app.get("/api/books/{book_title}")
+async def get_book(book_title: str):
+    for book in BOOKS:
+        if book.get('title').casefold() == book_title.casefold():
+            return book
