@@ -103,8 +103,15 @@ async def get_book_by_category(category: str):
 
 
 @app.post("/api/books/create_book")
-async def create_new_book(new_book=Body()):
+async def create_new_book(new_book = Body()):
     BOOKS.append(new_book)
+    
+
+@app.put("/api/books/update_book")
+async def update_book(updated_book = Body()):
+    for i in range(len(BOOKS)):
+        if BOOKS[i].get("title").casefold() == updated_book.get("title").casefold():
+            BOOKS[i] = updated_book
 
 
 @app.get("/api/books/{book_title}")
