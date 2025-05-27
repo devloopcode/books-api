@@ -20,47 +20,17 @@ async def get_books():
     return BOOKS
 
 
+@app.get("/api/books/{book_id}")
+async def get_book_by_id(book_id: int):
+    for book in BOOKS:
+        if book.id == book_id:
+            return book
+
+
 @app.post("/api/books/create-book")
 async def create_new_book(book_request: BookRequest):
     new_book = Book(**book_request.model_dump())
     BOOKS.append(find_book_id(new_book))
-
-@app.get("/api/books/")
-async def get_book_by_category(category: str):
-    books_to_returns = []
-    for book in BOOKS:
-        if book.get('category').casefold() == category.casefold():
-            books_to_returns.append(book)
-    return books_to_returns    
-
-@app.put("/api/books/update_book")
-async def update_book(updated_book = Body()):
-    for i in range(len(BOOKS)):
-        if BOOKS[i].get("title").casefold() == updated_book.get("title").casefold():
-            BOOKS[i] = updated_book
-
-
-@app.get("/api/books/{book_title}")
-async def get_book_by_title(book_title: str):
-    for book in BOOKS:
-        if book.get('title').casefold() == book_title.casefold():
-            return book
-        
-@app.delete("/api/books/{book_title}")
-async def delete_book(book_title: str):
-    for i in range(len(BOOKS)):
-        if BOOKS[i].get("title").casefold() == book_title.casefold():
-            BOOKS.pop(i)
-            break
-
-
-@app.get("/api/books/{book_author}/")
-async def get_book_by_author_category(book_author:str, category: str):
-    books_to_returns = []
-    for book in BOOKS:
-        if book.get('category').casefold() == category.casefold()  and book.get('author').casefold() == book_author.casefold():
-            books_to_returns.append(book)
-    return books_to_returns
 
 
 
