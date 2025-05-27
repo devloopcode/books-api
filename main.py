@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path
+from fastapi import FastAPI, Path, Query, HTTPException
 from models import Book
 from validation import BookRequest
 
@@ -25,10 +25,11 @@ async def get_book_by_id(book_id: int = Path(gt=0)):
     for book in BOOKS:
         if book.id == book_id:
             return book
+    raise HTTPException(status_code=404, detail="Book not found")
 
 
 @app.get("/api/books/")
-async def get_books_by_rating_published_date(published_date: int=None, book_rating: int=None):
+async def get_books_by_rating_published_date(published_date: int=Query(gt=1999, default=None), book_rating: int=Query(gt=0, lt=6, default=None)):
     books_to_return = []
     for book in BOOKS:
         if book.rating == book_rating or book.published_date == published_date:
@@ -47,6 +48,7 @@ async def update_book(book: BookRequest):
     for i in range(len(BOOKS)):
         if BOOKS[i].id == book.id:
             BOOKS[i] = book
+    raise HTTPException(status_code=404, detail="Book not found")
 
 
 @app.delete("/api/books/delete-book/{book_id}")
