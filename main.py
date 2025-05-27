@@ -5,7 +5,6 @@ from validation import BookRequest
 app = FastAPI()
 
 
-
 BOOKS = [
     Book(1, "To Kill a Mockingbird", "Harper Lee", "A powerful story about racial injustice and moral growth in the American South.", 4.8),
     Book(2, "1984", "George Orwell", "A chilling vision of a totalitarian future under constant surveillance.", 4.7),
@@ -14,7 +13,6 @@ BOOKS = [
     Book(5, "The Great Gatsby", "F. Scott Fitzgerald", "A critique of the American Dream set in the Roaring Twenties.", 4.4),
     Book(6, "Test", "George Orwell", "A chilling vision of a totalitarian future under constant surveillance.", 3.7),
 ]
-
 
 
 @app.get("/api/books")
