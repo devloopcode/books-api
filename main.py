@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path, Query, HTTPException
+from fastapi import FastAPI, Path, Query, HTTPException, status
 from models import Book
 from validation import BookRequest
 
@@ -15,20 +15,20 @@ BOOKS = [
 ]
 
 
-@app.get("/api/books")
+@app.get("/api/books", status_code=status.HTTP_200_OK)
 async def get_books():
     return BOOKS
 
 
-@app.get("/api/books/{book_id}")
+@app.get("/api/books/{book_id}", status_code=status.HTTP_200_OK)
 async def get_book_by_id(book_id: int = Path(gt=0)):
     for book in BOOKS:
         if book.id == book_id:
             return book
-    raise HTTPException(status_code=404, detail="Book not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
 
 
-@app.get("/api/books/")
+@app.get("/api/books/", status_code=status.HTTP_200_OK)
 async def get_books_by_rating_published_date(published_date: int=Query(gt=1999, default=None), book_rating: int=Query(gt=0, lt=6, default=None)):
     books_to_return = []
     for book in BOOKS:
@@ -37,21 +37,24 @@ async def get_books_by_rating_published_date(published_date: int=Query(gt=1999, 
     return books_to_return    
 
 
-@app.post("/api/books/create-book")
+@app.post("/api/books/create-book", status_code=status.HTTP_201_CREATED)
 async def create_new_book(book_request: BookRequest):
     new_book = Book(**book_request.model_dump())
     BOOKS.append(find_book_id(new_book))
     
 
-@app.put("/api/books/update-book")
+@app.put("/api/books/update-book", status_code=status.HTTP_204_NO_CONTENT)
 async def update_book(book: BookRequest):
+    changed = False
     for i in range(len(BOOKS)):
         if BOOKS[i].id == book.id:
             BOOKS[i] = book
-    raise HTTPException(status_code=404, detail="Book not found")
+            changed = True
+    if not changed:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
 
 
-@app.delete("/api/books/delete-book/{book_id}")
+@app.delete("/api/books/delete-book/{book_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_book(book_id: int = Path(gt=0)):
     for i in range(len(BOOKS)):
         if BOOKS[i].id == book_id:
