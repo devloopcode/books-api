@@ -6,12 +6,12 @@ app = FastAPI()
 
 
 BOOKS = [
-    Book(1, "To Kill a Mockingbird", "Harper Lee", "A powerful story about racial injustice and moral growth in the American South.", 4.8),
-    Book(2, "1984", "George Orwell", "A chilling vision of a totalitarian future under constant surveillance.", 4.7),
+    Book(1, "To Kill a Mockingbird", "Harper Lee", "A powerful story about racial injustice and moral growth in the American South.", 4),
+    Book(2, "1984", "George Orwell", "A chilling vision of a totalitarian future under constant surveillance.", 4),
     Book(3, "Clean Code", "Robert C. Martin", "A guide to writing readable, maintainable, and efficient code.", 5),
-    Book(4, "Sapiens: A Brief History of Humankind", "Yuval Noah Harari", "A sweeping narrative of human evolution, society, and culture.", 4.7),
-    Book(5, "The Great Gatsby", "F. Scott Fitzgerald", "A critique of the American Dream set in the Roaring Twenties.", 4.4),
-    Book(6, "Test", "George Orwell", "A chilling vision of a totalitarian future under constant surveillance.", 3.7),
+    Book(4, "Sapiens: A Brief History of Humankind", "Yuval Noah Harari", "A sweeping narrative of human evolution, society, and culture.", 4),
+    Book(5, "The Great Gatsby", "F. Scott Fitzgerald", "A critique of the American Dream set in the Roaring Twenties.", 4),
+    Book(6, "Test", "George Orwell", "A chilling vision of a totalitarian future under constant surveillance.", 3),
 ]
 
 
@@ -25,6 +25,15 @@ async def get_book_by_id(book_id: int):
     for book in BOOKS:
         if book.id == book_id:
             return book
+
+
+@app.get("/api/books/")
+async def get_books_by_rating(book_rating: int):
+    books_to_return = []
+    for book in BOOKS:
+        if book.rating == book_rating:
+            books_to_return.append(book)
+    return books_to_return    
 
 
 @app.post("/api/books/create-book")
