@@ -1,4 +1,4 @@
-from fastapi import Body, FastAPI
+from fastapi import FastAPI, Path
 from models import Book
 from validation import BookRequest
 
@@ -6,12 +6,12 @@ app = FastAPI()
 
 
 BOOKS = [
-    Book(1, "To Kill a Mockingbird", "Harper Lee", "A powerful story about racial injustice and moral growth in the American South.", 4),
-    Book(2, "1984", "George Orwell", "A chilling vision of a totalitarian future under constant surveillance.", 4),
-    Book(3, "Clean Code", "Robert C. Martin", "A guide to writing readable, maintainable, and efficient code.", 5),
-    Book(4, "Sapiens: A Brief History of Humankind", "Yuval Noah Harari", "A sweeping narrative of human evolution, society, and culture.", 4),
-    Book(5, "The Great Gatsby", "F. Scott Fitzgerald", "A critique of the American Dream set in the Roaring Twenties.", 4),
-    Book(6, "Test", "George Orwell", "A chilling vision of a totalitarian future under constant surveillance.", 3),
+    Book(1, "To Kill a Mockingbird", "Harper Lee", "A powerful story about racial injustice and moral growth in the American South.", 4,2000),
+    Book(2, "1984", "George Orwell", "A chilling vision of a totalitarian future under constant surveillance.", 4,2002),
+    Book(3, "Clean Code", "Robert C. Martin", "A guide to writing readable, maintainable, and efficient code.", 5, 2005),
+    Book(4, "Sapiens: A Brief History of Humankind", "Yuval Noah Harari", "A sweeping narrative of human evolution, society, and culture.", 4, 2000),
+    Book(5, "The Great Gatsby", "F. Scott Fitzgerald", "A critique of the American Dream set in the Roaring Twenties.", 4,2012),
+    Book(6, "Test", "George Orwell", "A chilling vision of a totalitarian future under constant surveillance.", 3, 2009),
 ]
 
 
@@ -21,17 +21,17 @@ async def get_books():
 
 
 @app.get("/api/books/{book_id}")
-async def get_book_by_id(book_id: int):
+async def get_book_by_id(book_id: int = Path(gt=0)):
     for book in BOOKS:
         if book.id == book_id:
             return book
 
 
 @app.get("/api/books/")
-async def get_books_by_rating(book_rating: int):
+async def get_books_by_rating_published_date(published_date: int=None, book_rating: int=None):
     books_to_return = []
     for book in BOOKS:
-        if book.rating == book_rating:
+        if book.rating == book_rating or book.published_date == published_date:
             books_to_return.append(book)
     return books_to_return    
 
@@ -50,7 +50,7 @@ async def update_book(book: BookRequest):
 
 
 @app.delete("/api/books/delete-book/{book_id}")
-async def delete_book(book_id: int):
+async def delete_book(book_id: int = Path(gt=0)):
     for i in range(len(BOOKS)):
         if BOOKS[i].id == book_id:
             BOOKS.pop(i)
