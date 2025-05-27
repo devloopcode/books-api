@@ -1,89 +1,18 @@
 from fastapi import Body, FastAPI
+from models import Book
+from validation import BookRequest
 
 app = FastAPI()
 
 
+
 BOOKS = [
-  {
-    "title": "To Kill a Mockingbird",
-    "author": "Harper Lee",
-    "category": "Fiction"
-  },
-  {
-    "title": "1984",
-    "author": "George Orwell",
-    "category": "Dystopian"
-  },
-  {
-    "title": "Animal Farm",
-    "author": "George Orwell",
-    "category": "Political Satire"
-  },
-  {
-    "title": "A Brief History of Time",
-    "author": "Stephen Hawking",
-    "category": "Science"
-  },
-  {
-    "title": "The Theory of Everything",
-    "author": "Stephen Hawking",
-    "category": "Science"
-  },
-  {
-    "title": "Cosmos",
-    "author": "Carl Sagan",
-    "category": "Science"
-  },
-  {
-    "title": "The Great Gatsby",
-    "author": "F. Scott Fitzgerald",
-    "category": "Classic"
-  },
-  {
-    "title": "This Side of Paradise",
-    "author": "F. Scott Fitzgerald",
-    "category": "Classic"
-  },
-  {
-    "title": "The Pragmatic Programmer",
-    "author": "Andrew Hunt and David Thomas",
-    "category": "Technology"
-  },
-  {
-    "title": "Clean Code",
-    "author": "Robert C. Martin",
-    "category": "Programming"
-  },
-  {
-    "title": "The Clean Coder",
-    "author": "Robert C. Martin",
-    "category": "Programming"
-  },
-  {
-    "title": "Code Complete",
-    "author": "Steve McConnell",
-    "category": "Programming"
-  },
-  {
-    "title": "Sapiens: A Brief History of Humankind",
-    "author": "Yuval Noah Harari",
-    "category": "History"
-  },
-  {
-    "title": "The Catcher in the Rye",
-    "author": "J.D. Salinger",
-    "category": "Coming-of-Age"
-  },
-  {
-    "title": "Thinking, Fast and Slow",
-    "author": "Daniel Kahneman",
-    "category": "Psychology"
-  },
-  {
-    "title": "The Art of War",
-    "author": "Sun Tzu",
-    "category": "Philosophy"
-  }
+    Book(1, "To Kill a Mockingbird", "Harper Lee", "A powerful story about racial injustice and moral growth in the American South.", 4.8),
+    Book(2, "1984", "George Orwell", "A chilling vision of a totalitarian future under constant surveillance.", 4.7),
+    Book(3, "Clean Code", "Robert C. Martin", "A guide to writing readable, maintainable, and efficient code.", 5),
+    Book(4, "Sapiens: A Brief History of Humankind", "Yuval Noah Harari", "A sweeping narrative of human evolution, society, and culture.", 4.7),
+    Book(5, "The Great Gatsby", "F. Scott Fitzgerald", "A critique of the American Dream set in the Roaring Twenties.", 4.4),
+    Book(6, "Test", "George Orwell", "A chilling vision of a totalitarian future under constant surveillance.", 3.7),
 ]
 
 
@@ -93,19 +22,18 @@ async def get_books():
     return BOOKS
 
 
+@app.post("/api/books/create-book")
+async def create_new_book(book_request: BookRequest):
+    new_book = Book(**book_request.model_dump())
+    BOOKS.append(find_book_id(new_book))
+
 @app.get("/api/books/")
 async def get_book_by_category(category: str):
     books_to_returns = []
     for book in BOOKS:
         if book.get('category').casefold() == category.casefold():
             books_to_returns.append(book)
-    return books_to_returns
-
-
-@app.post("/api/books/create_book")
-async def create_new_book(new_book = Body()):
-    BOOKS.append(new_book)
-    
+    return books_to_returns    
 
 @app.put("/api/books/update_book")
 async def update_book(updated_book = Body()):
@@ -135,3 +63,9 @@ async def get_book_by_author_category(book_author:str, category: str):
         if book.get('category').casefold() == category.casefold()  and book.get('author').casefold() == book_author.casefold():
             books_to_returns.append(book)
     return books_to_returns
+
+
+
+def find_book_id(book: Book):
+    book.id = 1 if len(BOOKS) == 0 else BOOKS[-1].id + 1
+    return book
